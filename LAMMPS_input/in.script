@@ -1,0 +1,89 @@
+# Author: Achraf Atila
+# Date: 07/07/2023
+# email: achraf.atila@gmail.com
+# Description: input_SHIK_sio2.glass_formation/SHIK-potential/20001 atom
+# 1 is Oxygen
+# 2 is Silicon
+
+# 
+units 			metal
+dimension 		3
+boundary 		p p p
+atom_style 	charge
+
+# Initial Config
+
+variable l equal 68
+
+#------------- Reading Atoms Start -------------
+region		box block 0.0 $l 0.0 $l 0.0 $l
+create_box 	2 box
+
+#------------------0.0%------------------
+
+create_atoms 1 random  13334 12345 NULL overlap 2.0 maxtry 200000
+create_atoms 2 random  6667 13258 NULL overlap 2.0 maxtry 200000
+
+
+# ------- assign charges and masses to system components --------------
+# Set charge
+set             type 1 charge -0.88775 # qO
+set             type 2 charge 1.7755 # qSi
+
+mass 1 15.9994   # O
+mass 2 28.0855   # Si
+
+group           gO  type 1
+group           gSi type 2
+
+
+# Define the interaction beteween atoms
+variable	    rvdw equal 7.99
+pair_style      hybrid/overlay coul/dsf 0.2 10 table spline 3950
+pair_coeff      * * coul/dsf
+pair_coeff      1 1 table "Potfiles/SHIK_OO.pot" SHIK ${rvdw}
+pair_coeff      1 2 table "Potfiles/SHIK_SiO.pot" SHIK ${rvdw}
+pair_coeff      2 2 table "Potfiles/SHIK_SiSi.pot" SHIK ${rvdw}
+
+
+#
+neighbor        2.0 bin
+neigh_modify    every 20 delay 20 check yes cluster yes page 100000 one 4000
+
+
+thermo 1
+min_style cg
+minimize 1.0e-6 0.0 10000 100000
+
+
+# Initialization of the simulation
+timestep        0.001
+velocity 	    all create 5000.0 12345 rot yes mom yes dist gaussian
+
+
+#Dump 
+dump      		simdump all custom 50000 silica.*.dump id type x y z vx vy vz
+
+#
+thermo			1000
+thermo_style    custom step atoms temp etotal vol enthalpy pe density press
+
+#Glass formation process
+fix 			s1 all nvt temp 5000.0 5000.0 0.1 tchain 10 # NVT run
+run 			100000 # 100 ps
+unfix 			s1
+
+fix 			s2 all npt temp 5000.0 5000.0 0.1 tchain 10 iso 1000.0 1000.0 1.0 pchain 10 #
+run 			1000000 # 1 ns
+unfix 			s2
+
+
+fix 			s3 all npt temp 5000.0 300.0 0.1 tchain 10 iso 1000.0 0.0 1.0 pchain 10
+run 			4700000 # 4.7 ns
+unfix 			s3
+
+fix 			s4 all npt temp 300.0 300.0 0.1 tchain 10 iso 0.0 0.0 1.0 pchain 10
+run 			1000000 # 1 ns
+unfix 			s4
+undump      	simdump
+
