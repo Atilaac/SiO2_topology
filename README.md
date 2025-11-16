@@ -1,5 +1,5 @@
 # SiO2_topology
-example input scripts for the generation of glass using LAMMPS and Python scripts for persistent homology analysis.
+Exemplary input scripts for the generation of glass using LAMMPS and Python scripts for persistent homology analysis.
 
 This code is used in the following publication: Achraf Atila, Yasser Bakhouch, Zhuocheng Xie, Revealing the Void-Size Distribution of Silica Glass using Persistent Homology, arXiv:2507.05484 (2025), https://doi.org/10.48550/arXiv.2507.05484
 
