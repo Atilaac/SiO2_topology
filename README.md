@@ -6,6 +6,7 @@ This code is used in the following publication: Achraf Atila, Yasser Bakhouch, Z
 
 If you use these codes in any way in your work, please cite the paper above.
 
+```
 @misc{atila2025,
       title={Revealing the Void-Size Distribution of Silica Glass using Persistent Homology}, 
       author={Achraf Atila and Yasser Bakhouch and Zhuocheng Xie},
@@ -15,4 +16,4 @@ If you use these codes in any way in your work, please cite the paper above.
       primaryClass={cond-mat.dis-nn},
       url={https://arxiv.org/abs/2507.05484}, 
 }
-
+```
